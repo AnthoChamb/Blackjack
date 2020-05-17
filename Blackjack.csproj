@@ -48,18 +48,29 @@
   <ItemGroup>
     <Compile Include="Carte.cs" />
     <Compile Include="Atout.cs" />
-    <Compile Include="Sabot.cs" />
-    <Compile Include="Paquet.cs" />
-    <Compile Include="MenuPrincipal.cs">
+    <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MenuPrincipal.Designer.cs">
-      <DependentUpon>MenuPrincipal.cs</DependentUpon>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Partie.cs" />
+    <Compile Include="Joueur.cs" />
+    <Compile Include="Sabot.cs" />
+    <Compile Include="Paquet.cs" />
+    <Compile Include="Salon.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Salon.Designer.cs">
+      <DependentUpon>Salon.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="MenuPrincipal.resx">
-      <DependentUpon>MenuPrincipal.cs</DependentUpon>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Salon.resx">
+      <DependentUpon>Salon.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -87,6 +98,10 @@
     <ProjectReference Include="ControlBlackjack\Controls.csproj">
       <Project>{ab883541-bb49-41f3-802d-ab78955fde0d}</Project>
       <Name>Controls</Name>
+    </ProjectReference>
+    <ProjectReference Include="JoueurVirtuel\JoueurVirtuel.csproj">
+      <Project>{cdbb5934-f925-4611-8b0f-dc4e4ca7e583}</Project>
+      <Name>JoueurVirtuel</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

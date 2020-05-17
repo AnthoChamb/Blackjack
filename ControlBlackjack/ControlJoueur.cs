@@ -15,7 +15,7 @@ namespace Blackjack {
                 InitializeComponent();
             }
 
-            public ControlJoueur(string nom, double montant, string action) {
+            public ControlJoueur(string nom, double montant, string action) : this() {
                 Nom = nom;
                 Montant = montant;
                 Action = action;
@@ -31,7 +31,7 @@ namespace Blackjack {
 
             public void AjouterCarte(ControlCarte carte) => flowMain.Controls.Add(carte);
 
-            public void ViderMain() => flowMain.Controls.Clear();
+            public void Defausser() => flowMain.Controls.Clear();
 
         }
     }

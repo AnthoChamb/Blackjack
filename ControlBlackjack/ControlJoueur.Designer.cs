@@ -46,7 +46,7 @@
             // 
             this.labMontant.AutoSize = true;
             this.labMontant.BackColor = System.Drawing.Color.Silver;
-            this.labMontant.Location = new System.Drawing.Point(2, 115);
+            this.labMontant.Location = new System.Drawing.Point(3, 115);
             this.labMontant.MinimumSize = new System.Drawing.Size(100, 0);
             this.labMontant.Name = "labMontant";
             this.labMontant.Size = new System.Drawing.Size(100, 13);
@@ -58,7 +58,7 @@
             this.labAction.AutoSize = true;
             this.labAction.BackColor = System.Drawing.Color.Silver;
             this.labAction.ForeColor = System.Drawing.Color.Khaki;
-            this.labAction.Location = new System.Drawing.Point(2, 128);
+            this.labAction.Location = new System.Drawing.Point(3, 128);
             this.labAction.MinimumSize = new System.Drawing.Size(100, 0);
             this.labAction.Name = "labAction";
             this.labAction.Size = new System.Drawing.Size(100, 13);

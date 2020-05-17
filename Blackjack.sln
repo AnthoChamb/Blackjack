@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack", "Blackjack.cspr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controls", "ControlBlackjack\Controls.csproj", "{AB883541-BB49-41F3-802D-AB78955FDE0D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoueurVirtuel", "JoueurVirtuel\JoueurVirtuel.csproj", "{CDBB5934-F925-4611-8B0F-DC4E4CA7E583}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{AB883541-BB49-41F3-802D-AB78955FDE0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB883541-BB49-41F3-802D-AB78955FDE0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB883541-BB49-41F3-802D-AB78955FDE0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDBB5934-F925-4611-8B0F-DC4E4CA7E583}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDBB5934-F925-4611-8B0F-DC4E4CA7E583}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDBB5934-F925-4611-8B0F-DC4E4CA7E583}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDBB5934-F925-4611-8B0F-DC4E4CA7E583}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

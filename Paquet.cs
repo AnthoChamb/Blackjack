@@ -21,14 +21,14 @@ namespace Blackjack {
         public int Compte { get => paquet.Count; }
 
         /// <summary>Mélange le paquet avec l'algorithme Fisher-Yates.</summary>
-        public void Brasser() {
+        public void Melanger() {
             Random alea = new Random();
             Carte[] melange = paquet.ToArray<Carte>();
             int j;
             Carte temp;
 
             for (int i = melange.Length - 1; i > 0; i--) {
-                j = alea.Next(i);
+                j = alea.Next(i + 1);
                 temp = melange[i]; 
                 melange[i] = melange[j];
                 melange[j] = temp;
