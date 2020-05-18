@@ -48,6 +48,9 @@
   <ItemGroup>
     <Compile Include="Carte.cs" />
     <Compile Include="Atout.cs" />
+    <Compile Include="Reseau.cs" />
+    <Compile Include="Croupier.cs" />
+    <Compile Include="Participant.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blackjack {
     /// <summary>Classe d'un sabot. Un rasemblement de paquets de cartes à jouer.</summary>
+    [Serializable]
     public class Sabot : Paquet {
         /// <summary>Crée un sabot contenant un seul paquet.</summary>
-        public Sabot() {
-
-        }
+        public Sabot() { }
 
         /// <summary>Crée un sabot contenant le nombre de paquets spécifié.</summary>
         /// <param name="paquets">Nombre de paquets contenus dans le sabot.</param>

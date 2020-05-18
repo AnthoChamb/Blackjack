@@ -40,19 +40,27 @@ namespace Blackjack {
         /// <param name="joueur">Joueur à ajouter.</param>
         public void AjouterJoueur(Joueur joueur) => flowJoueurs.Controls.Add(joueur.Control);
 
+        public void RetirerJoueur(Joueur joueur) => flowJoueurs.Controls.Remove(joueur.Control);
+
         /// <summary>Ajoute le croupier au salon de jeu.</summary>
         /// <param name="joueur">Joueur représentant le croupier.</param>
-        public void AjouterCroupier(Joueur joueur) {
-            ControlJoueur ctrl = joueur.Control;
+        public void AjouterCroupier(Croupier croupier) {
+            ControlJoueur ctrl = croupier.Control;
             ctrl.Location = new Point(12, 12);
             Controls.Add(ctrl);
         }
 
         /// <summary>Affiche la fenêtre de mise à l'écran.</summary>
         /// <param name="min">Mise minimale.</param>
-        public void AfficherMise(double min) {
+        /// <param name="max">Mise maximale.</param>
+        public void AfficherMise(double min, double max) {
             numMise.Minimum = (decimal) min;
-            pannelMise.Visible = true;
+            numMise.Maximum = (decimal) max;
+
+            if (pannelMise.InvokeRequired)
+                pannelMise.Invoke(new MethodInvoker(delegate { pannelMise.Visible = true; }));
+            else
+                pannelMise.Visible = true;
         }
 
         /// <summary>Gestionnaire d'évènement d'un clic sur le boutton «Miser».</summary>
@@ -67,6 +75,12 @@ namespace Blackjack {
         public void BloquerActions() => pannelActions.Enabled = false;
 
         /// <summary>Débloque la section des actions à l'écran.</summary>
-        public void DebloquerActions() => pannelActions.Enabled = true;
+        public void DebloquerActions() {
+            if (pannelActions.InvokeRequired)
+                pannelActions.Invoke(new MethodInvoker(delegate { pannelActions.Enabled = true; }));
+            else
+                pannelActions.Enabled = true;
+        } 
+
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blackjack {
     /// <summary>Classe d'un paquet de cartes à jouer.</summary>
+    [Serializable]
     public class Paquet {
         protected Stack<Carte> paquet;
 

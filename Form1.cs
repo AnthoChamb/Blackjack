@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -16,7 +17,12 @@ namespace Blackjack {
         }
 
         private void button1_Click(object sender, EventArgs e) {
-            Partie partie = new Partie("Anthony", 1, 100, 5);
+            Partie partie = new Partie("Hote", 2, 100, 5);
+            partie.Jouer();
+        }
+
+        private void button2_Click(object sender, EventArgs e) {
+            Partie partie = new Partie("Client", IPAddress.Parse("127.0.0.1"));
             partie.Jouer();
         }
     }
