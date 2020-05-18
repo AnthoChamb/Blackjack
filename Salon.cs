@@ -38,7 +38,13 @@ namespace Blackjack {
 
         /// <summary>Ajoute un joueur au salon de jeu.</summary>
         /// <param name="joueur">Joueur à ajouter.</param>
-        public void AjouterJoueur(Joueur joueur) => flowJoueurs.Controls.Add(joueur.Control);
+        public void AjouterJoueur(Joueur joueur) {
+            if (flowJoueurs.InvokeRequired)
+                flowJoueurs.Invoke(new MethodInvoker(delegate { flowJoueurs.Controls.Add(joueur.Control); }));
+            else
+                flowJoueurs.Controls.Add(joueur.Control);
+        }
+
 
         public void RetirerJoueur(Joueur joueur) => flowJoueurs.Controls.Remove(joueur.Control);
 
@@ -47,7 +53,11 @@ namespace Blackjack {
         public void AjouterCroupier(Croupier croupier) {
             ControlJoueur ctrl = croupier.Control;
             ctrl.Location = new Point(12, 12);
-            Controls.Add(ctrl);
+
+            if (InvokeRequired)
+                Invoke(new MethodInvoker(delegate { Controls.Add(ctrl); }));
+            else
+                Controls.Add(ctrl);
         }
 
         /// <summary>Affiche la fenêtre de mise à l'écran.</summary>

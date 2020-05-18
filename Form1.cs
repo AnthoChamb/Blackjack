@@ -17,13 +17,11 @@ namespace Blackjack {
         }
 
         private void button1_Click(object sender, EventArgs e) {
-            Partie partie = new Partie("Hote", 2, 100, 5);
-            partie.Jouer();
+            Partie partie = new Partie("Hote", 3, 100, 5);
         }
 
         private void button2_Click(object sender, EventArgs e) {
             Partie partie = new Partie("Client", IPAddress.Parse("127.0.0.1"));
-            partie.Jouer();
         }
     }
 }

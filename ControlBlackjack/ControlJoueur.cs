@@ -58,8 +58,12 @@ namespace Blackjack {
                     flowMain.Controls.Add(carte);
             }
 
-            public void Defausser() => flowMain.Controls.Clear();
-
+            public void Defausser() {
+                if (flowMain.InvokeRequired)
+                    flowMain.Invoke(new MethodInvoker(delegate { flowMain.Controls.Clear(); }));
+                else
+                    flowMain.Controls.Clear();
+            }
         }
     }
 }

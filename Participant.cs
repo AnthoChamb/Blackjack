@@ -50,6 +50,9 @@ namespace Blackjack {
             }
         }
 
+        /// <summary>Obtient et définit la propriété Actif du control utilisateur graphique.</summary>
+        public bool Actif { get => Control.Actif; set => Control.Actif = value; }
+
         /// <summary>Évalue si le participant saute.</summary>
         public bool Saute { get => Total > 21; }
 

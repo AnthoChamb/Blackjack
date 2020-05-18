@@ -12,30 +12,23 @@ using System.Windows.Forms;
 
 namespace Blackjack {
     internal class Reseau {
-        Partie partie;
-        List<NetworkStream> reseaux;
-        List<StreamReader> lectures;
-        List<StreamWriter> ecritures;
+        private readonly List<NetworkStream> reseaux;
+        private readonly List<StreamReader> lectures;
+        private readonly List<StreamWriter> ecritures;
 
-        private static ManualResetEvent attente = new ManualResetEvent(false);
+        private TcpListener tcpListener;
         private static BinaryFormatter formatteur = new BinaryFormatter();
 
-        internal Reseau(Partie partie) {
-            this.partie = partie;
-            reseaux = new List<NetworkStream>(partie.Nombre - 1);
-            lectures = new List<StreamReader>(partie.Nombre - 1);
-            ecritures = new List<StreamWriter>(partie.Nombre - 1);
+        internal Reseau() {
+            reseaux = new List<NetworkStream>(1);
+            lectures = new List<StreamReader>(1);
+            ecritures = new List<StreamWriter>(1);
 
-            TcpListener tcpListener = new TcpListener(IPAddress.Any, 999);
+            tcpListener = new TcpListener(IPAddress.Any, 999);
             tcpListener.Start();
-
-            tcpListener.BeginAcceptSocket(new AsyncCallback(NouvelleConnexion), tcpListener);
-
-            attente.WaitOne();
         }
 
-        internal Reseau(Partie partie, IPAddress ip) {
-            this.partie = partie;
+        internal Reseau(IPAddress ip) {
             reseaux = new List<NetworkStream>(1);
             lectures = new List<StreamReader>(1);
             ecritures = new List<StreamWriter>(1);
@@ -49,34 +42,8 @@ namespace Blackjack {
             ecritures.Add(new StreamWriter(fluxReseau));
         }
 
-        internal Partie ObtenirPartie() => (Partie)formatteur.Deserialize(reseaux[0]);
-
-        internal void EnvoyerJoueur(Joueur joueur) => formatteur.Serialize(reseaux[0], joueur);
-
-        internal Joueur ObtenirJoueur(int index) => (Joueur)formatteur.Deserialize(reseaux[index]);
-
-        internal void EnvoyerMise(double mise) {
-            foreach (StreamWriter ecriture in ecritures) {
-                ecriture.WriteLine(mise);
-                ecriture.Flush();
-            }
-        }
-
-        internal double ObtenirMise() => double.Parse(lectures[0].ReadLine());
-
-        internal void EnvoyerCoup(bool tirer) {
-            foreach (StreamWriter ecriture in ecritures) {
-                ecriture.WriteLine(tirer);
-                ecriture.Flush();
-            }
-        }
-
-        internal bool ObtenirCoup() => lectures[0].ReadLine() == true.ToString();
-
-        private void NouvelleConnexion(IAsyncResult async) {
-            TcpListener tcpListener = (TcpListener) async.AsyncState;
-
-            Socket client = tcpListener.EndAcceptSocket(async);
+        internal void ObtenirConnexion(Partie partie) {
+            Socket client = tcpListener.AcceptSocket();
 
             if (client.Connected) {
                 NetworkStream fluxReseau = new NetworkStream(client);
@@ -85,9 +52,73 @@ namespace Blackjack {
                 ecritures.Add(new StreamWriter(fluxReseau));
 
                 formatteur.Serialize(fluxReseau, partie);
-
-                attente.Set();
             }
+        } 
+
+        internal Partie ObtenirPartie() => (Partie)formatteur.Deserialize(reseaux[0]);
+
+        internal void EnvoyerJoueur(Joueur joueur) => formatteur.Serialize(reseaux[0], joueur);
+
+        private void EnvoyerJoueur(Joueur joueur, int index) => formatteur.Serialize(reseaux[index], joueur);
+
+        internal Joueur ObtenirJoueur() => (Joueur)formatteur.Deserialize(reseaux[0]);
+
+        internal Joueur ObtenirJoueur(int index) {
+            Joueur joueur = (Joueur)formatteur.Deserialize(reseaux[index]);
+
+            for (int i = 0; i < reseaux.Count; i++)
+                if (i != index)
+                    EnvoyerJoueur(joueur, i);
+
+            return joueur;
+        }
+
+        internal void EnvoyerMise(double mise) {
+            foreach (StreamWriter ecriture in ecritures) {
+                ecriture.WriteLine(mise);
+                ecriture.Flush();
+            }
+        }
+
+        private void EnvoyerMise(double mise, int index) {
+            ecritures[index].WriteLine(mise);
+            ecritures[index].Flush();
+        }
+
+        internal double ObtenirMise() => double.Parse(lectures[0].ReadLine());
+
+        internal double ObtenirMise(int index) {
+            double mise = double.Parse(lectures[index].ReadLine());
+
+            for (int i = 0; i < reseaux.Count; i++)
+                if (i != index)
+                    EnvoyerMise(mise, i);
+
+            return mise;
+        }
+
+        internal void EnvoyerCoup(bool tirer) {
+            foreach (StreamWriter ecriture in ecritures) {
+                ecriture.WriteLine(tirer);
+                ecriture.Flush();
+            }
+        }
+
+        private void EnvoyerCoup(bool tirer, int index) {
+            ecritures[index].WriteLine(tirer);
+            ecritures[index].Flush();
+        }
+
+        internal bool ObtenirCoup() => lectures[0].ReadLine() == true.ToString();
+
+        internal bool ObtenirCoup(int index) {
+            bool tirer = lectures[index].ReadLine() == true.ToString();
+
+            for (int i = 0; i < reseaux.Count; i++)
+                if (i != index)
+                    EnvoyerCoup(tirer, i);
+
+            return tirer;
         }
     }
 }

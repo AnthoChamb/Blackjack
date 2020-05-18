@@ -51,23 +51,21 @@ namespace Blackjack {
             this.min = min;
             local = HOTE;
 
+            salon.Show();
+
             if (nombre > 1) {
-                reseau = new Reseau(this);
-                while (joueurs.Count < nombre) {
-                    Joueur client = reseau.ObtenirJoueur(joueurs.Count - 1);
-                    joueurs.Add(client);
-                    salon.AjouterJoueur(client);
-                }
+                reseau = new Reseau();
+                new Thread(AttendreJoueur).Start();
+            } else {
+                AjouterCroupier();
+                Jouer();
             }
-            
-            Croupier croupier = new Croupier();
-            joueurs.Add(croupier);
-            salon.AjouterCroupier(croupier);
         }
 
         public Partie(string nom, IPAddress ip) {
-            reseau = new Reseau(this, ip);
+            reseau = new Reseau(ip);
             Partie hote = reseau.ObtenirPartie();
+
             sabot = hote.sabot;
             joueurs = hote.joueurs;
             initial = hote.initial;
@@ -76,28 +74,32 @@ namespace Blackjack {
             salon = new Salon(this);
             local = joueurs.Count;
 
-            salon.AjouterJoueur((Joueur)joueurs[HOTE]);
+            foreach (Joueur joueur in joueurs)
+                salon.AjouterJoueur(joueur);
 
             Joueur client = new Joueur(nom, initial);
-            joueurs.Add(client);
-            salon.AjouterJoueur(client);
-
+            AjouterJoueur(client);
             reseau.EnvoyerJoueur(client);
 
-            Croupier croupier = new Croupier();
-            joueurs.Add(croupier);
-            salon.AjouterCroupier(croupier);
+            salon.Show();
+
+            if (joueurs.Count < Nombre)
+                new Thread(AttendreJoueur).Start();
+            else {
+                AjouterCroupier();
+                Jouer();
+            }
         }
 
         #endregion
 
         #region Propriétés
 
-        public double Initial { get => initial; }
+        private int Nombre { get => joueurs.Capacity - 1; }
 
-        public double Min { get => min; }
+        private bool EstHote { get => local == HOTE; }
 
-        public int Nombre { get => joueurs.Capacity - 1; }
+        private bool EstActif { get => local == actif; }
 
         #endregion
 
@@ -105,44 +107,48 @@ namespace Blackjack {
 
         /// <summary>Démarre une partie de Blackjack.</summary>
         public void Jouer() {
-            if (!salon.Visible)
-                salon.Show();
-
             foreach (Participant participant in joueurs)
                 participant.Defausser();
 
             actif = HOTE;
+            joueurs[actif].Actif = true;
 
-            if (actif == local && joueurs[actif] is Joueur joueur)
+            if (EstActif && joueurs[actif] is Joueur joueur)
                 salon.AfficherMise(joueur.Montant < min ? joueur.Montant : min, joueur.Montant);
             else
-                new Thread(() => Miser(reseau.ObtenirMise())).Start();
+                new Thread(AttendreMise).Start();
         }
 
         /// <summary>Effectue une mise du montant spécifié.</summary>
         /// <param name="mise">Mise du joueur.</param>
         public void Miser(double mise) {
-            if (actif == local && Nombre > 1)
+            if (EstActif && Nombre > 1)
                 reseau.EnvoyerMise(mise);
+
+            joueurs[actif].Actif = false;
 
             if (joueurs[actif++] is Joueur joueur)
                 joueur.Miser(mise);
 
-            if (actif == local && joueurs[actif] is Joueur miseur)
+            if (joueurs[actif] is Joueur suivant)
+                suivant.Actif = true;
+
+            if (EstActif && joueurs[actif] is Joueur miseur)
                 salon.AfficherMise(miseur.Montant < min ? miseur.Montant : min, miseur.Montant);
             else if (joueurs[actif] is Croupier) {
                 DistribuerCartes();
-                if (local == actif)
+                joueurs[actif].Actif = true;
+                if (EstActif)
                     salon.DebloquerActions();
                 else
-                    new Thread(CoupReseau).Start();
+                    new Thread(AttendreCoup).Start();
             } else
-                new Thread(() => Miser(reseau.ObtenirMise())).Start();
+                new Thread(AttendreMise).Start();
         }
 
         /// <summary>Effectue l'action de tirer une carte (HIT).</summary>
         public void Tirer() {
-            if (actif == local)
+            if (EstActif)
                 reseau.EnvoyerCoup(true);
 
             joueurs[actif].Tirer(sabot.Piocher());
@@ -151,13 +157,13 @@ namespace Blackjack {
                 TourSuivant();
             else if (joueurs[actif] is Croupier)
                 CoupCroupier();
-            else if (actif != local)
-                new Thread(CoupReseau).Start();
+            else if (!EstActif)
+                new Thread(AttendreCoup).Start();
         }
 
         /// <summary>Effectue l'action de rester (STAND).</summary>
         public void Rester() {
-            if (actif == local)
+            if (EstActif)
                 reseau.EnvoyerCoup(false);
 
             joueurs[actif].Rester();
@@ -181,19 +187,22 @@ namespace Blackjack {
 
         /// <summary>Passe au tour suivant.</summary>
         private void TourSuivant() {
-            if (actif == local)
+            if (EstActif)
                 salon.BloquerActions();
 
-            actif++;
+            joueurs[actif++].Actif = false;
 
-            if (actif == local) // Si c'est maintenant ton tour
+            if (actif != joueurs.Count)
+                joueurs[actif].Actif = true;
+
+            if (EstActif) // Si c'est maintenant ton tour
                 salon.DebloquerActions();
-            else if (actif == joueurs.Count)
+            else if (actif == joueurs.Count) // Si tout le monde à jouer
                 Fin();
             else if (joueurs[actif] is Croupier)
                 CoupCroupier(); // Faire jouer le croupier
             else
-                new Thread(CoupReseau).Start();
+                new Thread(AttendreCoup).Start();
         }
 
         /// <summary>Effectue le coup du croupier.</summary>
@@ -205,26 +214,19 @@ namespace Blackjack {
                     Rester();
         }
 
-        private void CoupReseau() {
-            if (reseau.ObtenirCoup())
-                Tirer();
-            else
-                Rester();
-        }
-
         /// <summary>Effectue la fin d'une partie de Blackjack.</summary>
         private void Fin() {
             string msg = "";
 
             if (joueurs[joueurs.Count - 1].Saute) {
-                foreach (Joueur joueur in joueurs.Where(participant => participant is Joueur))
+                foreach (Joueur joueur in joueurs.GetRange(0, joueurs.Count - 1))
                     if (!joueur.Saute) {
                         joueur.Gagner();
                         msg += joueur.Nom + " a gagné(e) " + joueur.Mise + " $\n";
                     } else
                         msg += joueur.Nom + " a perdu(e) " + joueur.Mise + " $\n";
             } else {
-                foreach (Joueur joueur in joueurs.Where(participant => participant is Joueur))
+                foreach (Joueur joueur in joueurs.GetRange(0, joueurs.Count - 1))
                     if (joueur.Total == joueurs[joueurs.Count - 1].Total) {
                         joueur.Egaliter();
                         msg += joueur.Nom + " a égalisé(e) le croupier.\n";
@@ -262,17 +264,42 @@ namespace Blackjack {
             salon.RetirerJoueur(joueur);
         }
 
+        private void AjouterJoueur(Joueur joueur) {
+            joueurs.Add(joueur);
+            salon.AjouterJoueur(joueur);
+        }
+
+        private void AjouterCroupier() {
+            Croupier croupier = new Croupier();
+            joueurs.Add(croupier);
+            salon.AjouterCroupier(croupier);
+        }
+
         #endregion
 
-        #region Appels réseau
+        #region Appels réseaux
 
-        internal string ObtenirInfo() => Nombre + ";" + initial + ";" + min;
+        private void AttendreJoueur() {
+            if (EstHote)
+                reseau.ObtenirConnexion(this);
 
-        internal void DefinirInfo(string reseau) {
-            string[] info = reseau.Split(';'); 
-            joueurs.Capacity = int.Parse(info[0]) + 1;
-            initial = double.Parse(info[1]);
-            min = double.Parse(info[2]);
+            AjouterJoueur(EstHote ? reseau.ObtenirJoueur(joueurs.Count - 1) : reseau.ObtenirJoueur());
+
+            if (joueurs.Count < Nombre)
+                new Thread(AttendreJoueur).Start();
+            else {
+                AjouterCroupier();
+                Jouer();
+            }
+        }
+
+        private void AttendreMise() => Miser(EstHote ? reseau.ObtenirMise(actif - 1) : reseau.ObtenirMise());
+
+        private void AttendreCoup() {
+            if (EstHote ? reseau.ObtenirCoup(actif - 1) : reseau.ObtenirCoup())
+                Tirer();
+            else
+                Rester();
         }
 
         #endregion
