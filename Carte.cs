@@ -28,7 +28,7 @@ namespace Blackjack {
         /// <summary>Obtient la valeur de la carte en utilisant 1 comme valeur par défaut pour l'as.</summary>
         public int Valeur { get => ObtenirValeur(false); }
 
-        /// <summary>Obtient le controle utilisateur graphique associé à cette carte.</summary>
+        /// <summary>Obtient le contrôle utilisateur graphique associé à cette carte.</summary>
         public ControlCarte Control { get => new ControlCarte(ToString(), atout.Couleur, atout.Image); }
 
         /// <summary>Obtient la valeur de la carte en précisant la valeur de l'as.</summary>

@@ -10,17 +10,23 @@ using System.Windows.Forms;
 
 namespace Blackjack {
     namespace Controls {
-        public partial class ControlJoueur : UserControl {
-            public ControlJoueur() {
+        /// <summary>Classe du contrôle utilisateur graphique d'un participant de Blackjack.</summary>
+        public partial class ControlParticipant : UserControl {
+            /// <summary>Crée un contrôle utilisateur graphique d'un participant de Blackjack.</summary>
+            public ControlParticipant() {
                 InitializeComponent();
             }
 
-            public ControlJoueur(string nom) : this() {
+            /// <summary>Crée un contrôle utilisateur graphique d'un participant de Blackjack avec le nom spécifié.</summary>
+            /// <param name="nom">Nom du participant.</param>
+            public ControlParticipant(string nom) : this() {
                 Nom = nom;
             }
 
+            /// <summary>Obtient et définit le nom affiché par le contrôle utilisateur graphique.</summary>
             public string Nom { get => labNom.Text; set => labNom.Text = value; }
 
+            /// <summary>Obtient et définit le montant affiché par le contrôle utilisateur graphique.</summary>
             public double Montant {
                 get => double.Parse(labMontant.Text.Split(' ')[0]);
                 set {
@@ -31,6 +37,7 @@ namespace Blackjack {
                 }
             }
 
+            /// <summary>Obtient et définit la dernière action affiché par le contrôle utilisateur graphique.</summary>
             public string Action { 
                 get => labAction.Text;
                 set {
@@ -41,8 +48,10 @@ namespace Blackjack {
                 }
             }
 
+            /// <summary>Obtient et définit si le contrôle utilisateur graphique est affiché comme étant actif.</summary>
             public bool Actif { get => BackColor == Color.DarkOliveGreen; set => BackColor = value ? Color.DarkOliveGreen : Color.Transparent; }
 
+            /// <summary>Obtient et définit si le contrôle utilisateur graphique est affiché comme étant un croupier.</summary>
             public bool Croupier { 
                 get => labMontant.Visible;
                 set {
@@ -51,6 +60,8 @@ namespace Blackjack {
                 }
             }
 
+            /// <summary>Ajoute la carte spécifié à la main du contrôle utilisateur graphique.</summary>
+            /// <param name="carte">Carte à ajouter.</param>
             public void AjouterCarte(ControlCarte carte) {
                 if (flowMain.InvokeRequired)
                     flowMain.Invoke(new MethodInvoker(delegate { flowMain.Controls.Add(carte); }));
@@ -58,6 +69,7 @@ namespace Blackjack {
                     flowMain.Controls.Add(carte);
             }
 
+            /// <summary>Vide la main du contrôle utilisateur graphique.</summary>
             public void Defausser() {
                 if (flowMain.InvokeRequired)
                     flowMain.Invoke(new MethodInvoker(delegate { flowMain.Controls.Clear(); }));

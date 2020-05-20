@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using Blackjack.Controls;
 
 namespace Blackjack {
-    /// <summary>Classe du salon de jeu d'une partie.</summary>
+    /// <summary>Form du salon de jeu d'une partie.</summary>
     public partial class Salon : Form {
         private readonly Partie partie;
 
@@ -45,13 +45,14 @@ namespace Blackjack {
                 flowJoueurs.Controls.Add(joueur.Control);
         }
 
-
+        /// <summary>Retire le joueur spécifié du salon de jeu.</summary>
+        /// <param name="joueur">Joueur à retirer.</param>
         public void RetirerJoueur(Joueur joueur) => flowJoueurs.Controls.Remove(joueur.Control);
 
         /// <summary>Ajoute le croupier au salon de jeu.</summary>
-        /// <param name="joueur">Joueur représentant le croupier.</param>
+        /// <param name="croupier">Croupier à ajouter.</param>
         public void AjouterCroupier(Croupier croupier) {
-            ControlJoueur ctrl = croupier.Control;
+            ControlParticipant ctrl = croupier.Control;
             ctrl.Location = new Point(12, 12);
 
             if (InvokeRequired)
@@ -91,6 +92,5 @@ namespace Blackjack {
             else
                 pannelActions.Enabled = true;
         } 
-
     }
 }

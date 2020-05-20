@@ -2,28 +2,33 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace Blackjack {
-    /// <summary>Classe abstraite d'une participant de Blackjack.</summary>
+    /// <summary>Classe d'un participant de Blackjack. Cette classe ne peut pas être instanciée.</summary>
     [Serializable]
-    abstract public class Participant {
+    public abstract class Participant {
         protected readonly string nom;
         protected readonly List<Carte> main;
         protected bool reste;
 
-        [NonSerialized] protected ControlJoueur control;
+        [NonSerialized] private ControlParticipant control;
 
+        /// <summary>Crée un participant.</summary>
+        /// <param name="nom">Nom du participant.</param>
+        /// /// <exception cref="ArgumentException">Le nom du participant ne peut pas être une chaine vide.</exception>
+        /// <exception cref="ArgumentNullException">Le nom du participant ne peut pas être la valeur null.</exception>
         protected Participant(string nom) {
-            this.nom = nom;
+            this.nom = nom == "" ? throw new ArgumentException("Le nom du participant ne peut pas être une chaine vide.", "nom") : nom ?? throw new ArgumentNullException("nom", "Le nom du participant ne peut pas être la valeur null.");
             main = new List<Carte>(2);
-            control = new ControlJoueur(nom);
+            control = new ControlParticipant(nom);
         }
 
         /// <summary>Obtient le nom du participant</summary>
         public string Nom { get => nom; }
 
-        /// <summary>Obtient le controle utilisateur graphique associé à ce participant.</summary>
-        public ControlJoueur Control { get => control ?? (control = GenererControl()); }
+        /// <summary>Obtient le contrôle utilisateur graphique associé à ce participant.</summary>
+        public ControlParticipant Control { get => control ?? (control = GenererControl()); }
 
         /// <summary>Obtient le total du participant.</summary>
         /// <remarks>Le total obtenu calcule lui-même les as dans le but d'obtenir le total le plus près de 21 sans le dépasser lorsque cela est possible.</remarks>
@@ -88,6 +93,8 @@ namespace Blackjack {
             reste = false;
         }
 
-        protected abstract ControlJoueur GenererControl();
+        /// <summary>Génère le contrôle utilisateur graphique associé à ce participant.</summary>
+        /// <returns>Retourne le contrôle utilisateur graphique associé à ce participant.</returns>
+        protected abstract ControlParticipant GenererControl();
     }
 }

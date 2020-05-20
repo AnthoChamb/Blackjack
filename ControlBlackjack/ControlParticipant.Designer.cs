@@ -1,6 +1,6 @@
 ﻿namespace Blackjack {
     namespace Controls {
-        partial class ControlJoueur {
+        partial class ControlParticipant {
             /// <summary> 
             /// Variable nécessaire au concepteur.
             /// </summary>
@@ -63,7 +63,7 @@
             this.labAction.Name = "labAction";
             this.labAction.Size = new System.Drawing.Size(100, 13);
             this.labAction.TabIndex = 2;
-            this.labAction.Text = "Dernière action";
+            this.labAction.Text = "Rejoint";
             // 
             // flowMain
             // 
@@ -72,7 +72,7 @@
             this.flowMain.Size = new System.Drawing.Size(397, 88);
             this.flowMain.TabIndex = 3;
             // 
-            // ControlJoueur
+            // ControlParticipant
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -81,7 +81,7 @@
             this.Controls.Add(this.labAction);
             this.Controls.Add(this.labMontant);
             this.Controls.Add(this.labNom);
-            this.Name = "ControlJoueur";
+            this.Name = "ControlParticipant";
             this.Size = new System.Drawing.Size(404, 145);
             this.ResumeLayout(false);
             this.PerformLayout();

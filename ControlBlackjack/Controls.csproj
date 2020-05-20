@@ -56,12 +56,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ControlJoueur.cs">
+    <Compile Include="ControlParticipant.cs">
       <SubType>UserControl</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="ControlJoueur.Designer.cs">
-      <DependentUpon>ControlJoueur.cs</DependentUpon>
+    <Compile Include="ControlParticipant.Designer.cs">
+      <DependentUpon>ControlParticipant.cs</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
@@ -76,8 +76,8 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ControlJoueur.resx">
-      <DependentUpon>ControlJoueur.cs</DependentUpon>
+    <EmbeddedResource Include="ControlParticipant.resx">
+      <DependentUpon>ControlParticipant.cs</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

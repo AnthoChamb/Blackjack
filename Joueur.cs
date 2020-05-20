@@ -17,9 +17,10 @@ namespace Blackjack {
         /// <summary>Crée un joueur.</summary>
         /// <param name="nom">Nom du joueur.</param>
         /// <param name="montant">Montant initial du joueur.</param>
+        /// <exception cref="ArgumentOutOfRangeException">Le montant initial du joueur doit être plus grand que 0.</exception>
         public Joueur(string nom, double montant) : base(nom) {
-            this.montant = montant;
-            control.Montant = montant;
+            this.montant = montant > 0 ? montant : throw new ArgumentOutOfRangeException("montant", "Le montant initial du joueur doit être plus grand que 0.");
+            Control.Montant = montant;
         }
 
         /// <summary>Obtient le montant du joueur.</summary>
@@ -34,26 +35,29 @@ namespace Blackjack {
             this.mise = mise;
             montant -= mise;
 
-            control.Montant = montant;
-            control.Action = "Mise " + mise + " $";
+            Control.Montant = montant;
+            Control.Action = "Mise " + mise + " $";
         }
 
         /// <summary>Effectue l'action lors d'une victoire contre le croupier.</summary>
         public void Gagner() {
             montant += mise * 2;
-            control.Montant = montant;
+            Control.Montant = montant;
 
-            control.Action = "Gagne";
+            Control.Action = "Gagne";
         }
 
         /// <summary>Effectue l'action lors d'égalité avec le croupier.</summary>
         public void Egaliter() {
             montant += mise;
-            control.Montant = montant;
+            Control.Montant = montant;
 
-            control.Action = "Égalité";
+            Control.Action = "Égalité";
         }
 
-        protected override ControlJoueur GenererControl() => new ControlJoueur(nom) { Montant = montant };
+        /// <summary>Effectue l'action de perdre contre le coupier.</summary>
+        public void Perdre() => Control.Action = "Perdu";
+
+        protected override ControlParticipant GenererControl() => new ControlParticipant(nom) { Montant = montant };
     }
 }
