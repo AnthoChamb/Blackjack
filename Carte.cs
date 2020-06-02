@@ -1,9 +1,5 @@
 ﻿using Blackjack.Controls;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blackjack {
     /// <summary>Classe d'une carte à jouer.</summary>
@@ -17,7 +13,6 @@ namespace Blackjack {
         /// <param name="atout">Atout de la carte.</param>
         /// <exception cref="ArgumentOutOfRangeException">La figure de la carte doit être entre 1 (As) et 13 (Roi).</exception>
         public Carte(int figure, Atout atout) {
-            if (figure > 0 && figure <= 13)
             this.figure = figure > 0 && figure <= 13 ? figure : throw new ArgumentOutOfRangeException("figure", "La figure de la carte doit être entre 1 (As) et 13 (Roi).");
             this.atout = atout;
         }

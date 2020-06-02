@@ -28,6 +28,7 @@
             this.labMontant = new System.Windows.Forms.Label();
             this.labAction = new System.Windows.Forms.Label();
             this.flowMain = new System.Windows.Forms.FlowLayoutPanel();
+            this.labTotal = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // labNom
@@ -72,11 +73,25 @@
             this.flowMain.Size = new System.Drawing.Size(397, 88);
             this.flowMain.TabIndex = 3;
             // 
+            // labTotal
+            // 
+            this.labTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.labTotal.BackColor = System.Drawing.Color.Black;
+            this.labTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labTotal.ForeColor = System.Drawing.Color.White;
+            this.labTotal.Location = new System.Drawing.Point(355, 95);
+            this.labTotal.Name = "labTotal";
+            this.labTotal.Size = new System.Drawing.Size(46, 46);
+            this.labTotal.TabIndex = 4;
+            this.labTotal.Text = "0";
+            this.labTotal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // ControlParticipant
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Transparent;
+            this.Controls.Add(this.labTotal);
             this.Controls.Add(this.flowMain);
             this.Controls.Add(this.labAction);
             this.Controls.Add(this.labMontant);
@@ -94,6 +109,7 @@
             private System.Windows.Forms.Label labMontant;
             private System.Windows.Forms.Label labAction;
             private System.Windows.Forms.FlowLayoutPanel flowMain;
+            private System.Windows.Forms.Label labTotal;
         }
     }
 }

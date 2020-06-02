@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Blackjack {
+    [Serializable]
     internal class Reseau {
         private readonly List<NetworkStream> reseaux;
         private readonly List<StreamReader> lectures;
@@ -157,6 +153,25 @@ namespace Blackjack {
                     EnvoyerCoup(tirer, i);
 
             return tirer;
+        }
+
+        /// <summary>Envoie le sabot aux clients.</summary>
+        /// <param name="sabot">Sabot à envoyer.</param>
+        internal void EnvoyerSabot(Sabot sabot) {
+            foreach (NetworkStream flux in reseaux)
+                formatteur.Serialize(flux, sabot);
+        }
+
+        /// <summary>Obtient le sabot de l'hôte.</summary>
+        /// <returns>Retourne le sabot obtenu.</returns>
+        internal Sabot ObtenirSabot() => (Sabot)formatteur.Deserialize(reseaux[0]);
+
+        /// <summary>Retire un client de la communication réseau.</summary>
+        /// <param name="index">Indice réseau du client.</param>
+        internal void Retirer(int index) {
+            reseaux.RemoveAt(index);
+            lectures.RemoveAt(index);
+            ecritures.RemoveAt(index);
         }
     }
 }

@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using Blackjack.Controls;
+using System;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Blackjack.Controls;
 
 namespace Blackjack {
     /// <summary>Form du salon de jeu d'une partie.</summary>
@@ -47,7 +40,12 @@ namespace Blackjack {
 
         /// <summary>Retire le joueur spécifié du salon de jeu.</summary>
         /// <param name="joueur">Joueur à retirer.</param>
-        public void RetirerJoueur(Joueur joueur) => flowJoueurs.Controls.Remove(joueur.Control);
+        public void RetirerJoueur(Joueur joueur) {
+            if (flowJoueurs.InvokeRequired)
+                flowJoueurs.Invoke(new MethodInvoker(delegate { flowJoueurs.Controls.Remove(joueur.Control); }));
+            else
+                flowJoueurs.Controls.Remove(joueur.Control);
+        }
 
         /// <summary>Ajoute le croupier au salon de jeu.</summary>
         /// <param name="croupier">Croupier à ajouter.</param>
@@ -65,8 +63,8 @@ namespace Blackjack {
         /// <param name="min">Mise minimale.</param>
         /// <param name="max">Mise maximale.</param>
         public void AfficherMise(double min, double max) {
-            numMise.Minimum = (decimal) min;
-            numMise.Maximum = (decimal) max;
+            numMise.Minimum = (decimal)min;
+            numMise.Maximum = (decimal)max;
 
             if (pannelMise.InvokeRequired)
                 pannelMise.Invoke(new MethodInvoker(delegate { pannelMise.Visible = true; }));
@@ -78,7 +76,7 @@ namespace Blackjack {
         /// <param name="sender">Objet à l'origine de l'évènement.</param>
         /// <param name="e">Paramètres de l'évènement.</param>
         private void btnMiser_Click(object sender, EventArgs e) {
-            partie.Miser((double) numMise.Value);
+            partie.Miser((double)numMise.Value);
             pannelMise.Visible = false;
         }
 
@@ -91,6 +89,6 @@ namespace Blackjack {
                 pannelActions.Invoke(new MethodInvoker(delegate { pannelActions.Enabled = true; }));
             else
                 pannelActions.Enabled = true;
-        } 
+        }
     }
 }

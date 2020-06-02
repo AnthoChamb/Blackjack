@@ -38,6 +38,7 @@ namespace Blackjack {
 
         /// <summary>Obtient et retire la carte au dessus du paquet.</summary>
         /// <returns>Retourne la carte au dessus du paquet.</returns>
+        /// <exception cref="InvalidOperationException">Le paquet doit contenir au moins une carte.</exception>
         public Carte Piocher() => paquet.Pop();
     }
 }

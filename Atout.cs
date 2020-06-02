@@ -1,8 +1,6 @@
 ﻿
 using System;
 using System.Drawing;
-using System.Windows.Forms;
-using System.Xml.Linq;
 
 namespace Blackjack {
     /// <summary>Structure d'un atout de carte à jouer.</summary>

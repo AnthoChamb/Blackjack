@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace Blackjack {
@@ -38,7 +31,7 @@ namespace Blackjack {
             }
 
             /// <summary>Obtient et définit la dernière action affiché par le contrôle utilisateur graphique.</summary>
-            public string Action { 
+            public string Action {
                 get => labAction.Text;
                 set {
                     if (labAction.InvokeRequired)
@@ -48,11 +41,21 @@ namespace Blackjack {
                 }
             }
 
+            public int Total {
+                get => int.Parse(labTotal.Text);
+                set {
+                    if (labTotal.InvokeRequired)
+                        labTotal.Invoke(new MethodInvoker(delegate { labTotal.Text = value.ToString(); }));
+                    else
+                        labTotal.Text = value.ToString();
+                }
+            }
+
             /// <summary>Obtient et définit si le contrôle utilisateur graphique est affiché comme étant actif.</summary>
             public bool Actif { get => BackColor == Color.DarkOliveGreen; set => BackColor = value ? Color.DarkOliveGreen : Color.Transparent; }
 
             /// <summary>Obtient et définit si le contrôle utilisateur graphique est affiché comme étant un croupier.</summary>
-            public bool Croupier { 
+            public bool Croupier {
                 get => labMontant.Visible;
                 set {
                     labMontant.Visible = value;

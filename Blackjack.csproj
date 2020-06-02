@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Carte.cs" />
     <Compile Include="Atout.cs" />
+    <Compile Include="JoueurVirtuel.cs" />
     <Compile Include="Reseau.cs" />
     <Compile Include="Croupier.cs" />
     <Compile Include="Participant.cs" />
@@ -102,9 +103,9 @@
       <Project>{ab883541-bb49-41f3-802d-ab78955fde0d}</Project>
       <Name>Controls</Name>
     </ProjectReference>
-    <ProjectReference Include="JoueurVirtuel\JoueurVirtuel.csproj">
-      <Project>{cdbb5934-f925-4611-8b0f-dc4e4ca7e583}</Project>
-      <Name>JoueurVirtuel</Name>
+    <ProjectReference Include="IA\IA.csproj">
+      <Project>{a1e610ef-de3e-4842-8b55-bd330adbb59b}</Project>
+      <Name>IA</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

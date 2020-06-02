@@ -1,11 +1,6 @@
 ﻿using Blackjack.Controls;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace Blackjack {
     /// <summary>Classe d'un joueur de Blackjack.</summary>
@@ -20,7 +15,7 @@ namespace Blackjack {
         /// <exception cref="ArgumentOutOfRangeException">Le montant initial du joueur doit être plus grand que 0.</exception>
         public Joueur(string nom, double montant) : base(nom) {
             this.montant = montant > 0 ? montant : throw new ArgumentOutOfRangeException("montant", "Le montant initial du joueur doit être plus grand que 0.");
-            Control.Montant = montant;
+            control.Montant = montant;
         }
 
         /// <summary>Obtient le montant du joueur.</summary>
@@ -35,29 +30,40 @@ namespace Blackjack {
             this.mise = mise;
             montant -= mise;
 
-            Control.Montant = montant;
-            Control.Action = "Mise " + mise + " $";
+            control.Montant = montant;
+            control.Action = "Mise " + mise + " $";
+        }
+
+        /// <summary>Effectue l'action lors d'une victoire avec un Blackjack contre le croupier.</summary>
+        public void GagnerBlackjack() {
+            montant += mise * 2.5;
+            control.Montant = montant;
+
+            control.Action = "Gagne avec Blackjack";
         }
 
         /// <summary>Effectue l'action lors d'une victoire contre le croupier.</summary>
         public void Gagner() {
             montant += mise * 2;
-            Control.Montant = montant;
+            control.Montant = montant;
 
-            Control.Action = "Gagne";
+            control.Action = "Gagne";
         }
 
         /// <summary>Effectue l'action lors d'égalité avec le croupier.</summary>
         public void Egaliter() {
             montant += mise;
-            Control.Montant = montant;
+            control.Montant = montant;
 
-            Control.Action = "Égalité";
+            control.Action = "Égalité";
         }
 
         /// <summary>Effectue l'action de perdre contre le coupier.</summary>
-        public void Perdre() => Control.Action = "Perdu";
+        public void Perdre() => control.Action = "Perdu";
 
-        protected override ControlParticipant GenererControl() => new ControlParticipant(nom) { Montant = montant };
+        /// <summary>Génère le contrôle utilisateur graphique du joueur après la sérialisation.</summary>
+        /// <param name="contexte">Contexte du flux sérialisé</param>
+        [OnDeserialized()]
+        private void GenererControl(StreamingContext contexte) => control = new ControlParticipant(nom) { Montant = montant };
     }
 }
