@@ -15,19 +15,34 @@ namespace Blackjack {
             this.partie = partie;
         }
 
+        #region Gestionnaires d'évènements
+
         /// <summary>Gestionnaire d'évènement d'un clic sur le boutton «Tirer».</summary>
         /// <param name="sender">Objet à l'origine de l'évènement.</param>
         /// <param name="e">Paramètres de l'évènement.</param>
-        private void btnTirer_Click(object sender, EventArgs e) {
-            partie.Tirer();
-        }
+        private void btnTirer_Click(object sender, EventArgs e) => partie.Tirer();
 
         /// <summary>Gestionnaire d'évènement d'un clic sur le boutton «Rester».</summary>
         /// <param name="sender">Objet à l'origine de l'évènement.</param>
         /// <param name="e">Paramètres de l'évènement.</param>
-        private void btnRester_Click(object sender, EventArgs e) {
-            partie.Rester();
+        private void btnRester_Click(object sender, EventArgs e) => partie.Rester();
+
+        /// <summary>Gestionnaire d'évènement d'un clic sur le boutton «Miser».</summary>
+        /// <param name="sender">Objet à l'origine de l'évènement.</param>
+        /// <param name="e">Paramètres de l'évènement.</param>
+        private void btnMiser_Click(object sender, EventArgs e) {
+            partie.Miser((double)numMise.Value);
+            pannelMise.Visible = false;
         }
+
+        /// <summary>Gestionnaire d'évènement de la fermeture du formulaire.</summary>
+        /// <param name="sender">Objet à l'origine de l'évènement.</param>
+        /// <param name="e">Paramètres de l'évènement.</param>
+        private void Salon_FormClosed(object sender, FormClosedEventArgs e) => Dispose();
+
+        #endregion
+
+        #region Méthodes publiques
 
         /// <summary>Ajoute un joueur au salon de jeu.</summary>
         /// <param name="joueur">Joueur à ajouter.</param>
@@ -72,14 +87,6 @@ namespace Blackjack {
                 pannelMise.Visible = true;
         }
 
-        /// <summary>Gestionnaire d'évènement d'un clic sur le boutton «Miser».</summary>
-        /// <param name="sender">Objet à l'origine de l'évènement.</param>
-        /// <param name="e">Paramètres de l'évènement.</param>
-        private void btnMiser_Click(object sender, EventArgs e) {
-            partie.Miser((double)numMise.Value);
-            pannelMise.Visible = false;
-        }
-
         /// <summary>Bloque la section des actions de l'écran.</summary>
         public void BloquerActions() => pannelActions.Enabled = false;
 
@@ -90,5 +97,15 @@ namespace Blackjack {
             else
                 pannelActions.Enabled = true;
         }
+
+        /// <summary>Ferme le salon de jeu.</summary>
+        public void Fermer() {
+            if (InvokeRequired)
+                Invoke(new MethodInvoker(delegate { Close(); }));
+            else
+                Close();
+        }
+
+        #endregion
     }
 }

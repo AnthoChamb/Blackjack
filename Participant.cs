@@ -14,7 +14,7 @@ namespace Blackjack {
 
         /// <summary>Crée un participant.</summary>
         /// <param name="nom">Nom du participant.</param>
-        /// /// <exception cref="ArgumentException">Le nom du participant ne peut pas être une chaine vide.</exception>
+        /// <exception cref="ArgumentException">Le nom du participant ne peut pas être une chaine vide.</exception>
         /// <exception cref="ArgumentNullException">Le nom du participant ne peut pas être la valeur null.</exception>
         protected Participant(string nom) {
             this.nom = nom == "" ? throw new ArgumentException("Le nom du participant ne peut pas être une chaine vide.", "nom") : nom ?? throw new ArgumentNullException("nom", "Le nom du participant ne peut pas être la valeur null.");

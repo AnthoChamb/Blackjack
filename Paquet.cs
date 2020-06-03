@@ -28,7 +28,7 @@ namespace Blackjack {
 
             for (int i = melange.Length - 1; i > 0; i--) {
                 j = alea.Next(i + 1);
-                temp = melange[i]; 
+                temp = melange[i];
                 melange[i] = melange[j];
                 melange[j] = temp;
             }

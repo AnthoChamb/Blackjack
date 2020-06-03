@@ -10,9 +10,13 @@
         /// </summary>
         /// <param name="disposing">true si les ressources managées doivent être supprimées ; sinon, false.</param>
         protected override void Dispose(bool disposing) {
-            if (disposing && (components != null)) {
-                components.Dispose();
-            }
+            if (disposing)
+                if (components != null)
+                    components.Dispose();
+
+            if (partie != null)
+                partie.Dispose();
+
             base.Dispose(disposing);
         }
 
@@ -139,6 +143,7 @@
             this.Controls.Add(this.flowJoueurs);
             this.Name = "Salon";
             this.Text = "Salon de jeu";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Salon_FormClosed);
             this.pannelActions.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numMise)).EndInit();
             this.pannelMise.ResumeLayout(false);

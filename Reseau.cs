@@ -7,13 +7,13 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Blackjack {
     [Serializable]
-    internal class Reseau {
+    internal class Reseau : IDisposable {
         private readonly List<NetworkStream> reseaux;
         private readonly List<StreamReader> lectures;
         private readonly List<StreamWriter> ecritures;
 
-        private TcpListener tcpListener;
-        private static BinaryFormatter formatteur = new BinaryFormatter();
+        private readonly TcpListener tcpListener;
+        private static readonly BinaryFormatter formatteur = new BinaryFormatter();
 
         /// <summary>Crée une classe réseau pour un hôte.</summary>
         internal Reseau() {
@@ -37,6 +37,8 @@ namespace Blackjack {
             hote = new TcpClient(ip.ToString() ?? throw new ArgumentNullException("ip", "L'adresse IP de l'hôte ne peut pas être la valeur null."), 999);
 
             NetworkStream fluxReseau = hote.GetStream();
+            fluxReseau.ReadTimeout = fluxReseau.WriteTimeout = 20000; // Fixe la limite du délai de réponses
+
             reseaux.Add(fluxReseau);
             lectures.Add(new StreamReader(fluxReseau));
             ecritures.Add(new StreamWriter(fluxReseau));
@@ -44,11 +46,14 @@ namespace Blackjack {
 
         /// <summary>Obtient une connexion distante et envoie les informations de la partie à celle-ci.</summary>
         /// <param name="partie">Partie à envoyer.</param>
+        /// <exception cref="SocketException">Exception levée lorsqu'aucune connexion est obtenue.</exception>
         internal void ObtenirConnexion(Partie partie) {
             Socket client = tcpListener.AcceptSocket();
 
             if (client.Connected) {
                 NetworkStream fluxReseau = new NetworkStream(client);
+                fluxReseau.ReadTimeout = fluxReseau.WriteTimeout = 20000; // Fixe la limite du délai de réponses
+
                 reseaux.Add(fluxReseau);
                 lectures.Add(new StreamReader(fluxReseau));
                 ecritures.Add(new StreamWriter(fluxReseau));
@@ -145,8 +150,13 @@ namespace Blackjack {
         /// <summary>Obtient si le jouer doit tirer (HIT) ou rester (STAND) d'un client et distribue cette réponse aux autres.</summary>
         /// <param name="index">Indice réseau du client.</param>
         /// <returns>Retourne si le jouer doit tirer (HIT) ou rester (STAND).</returns>
+        /// <exception cref="InvalidDataException">Le flux de données réseau doit obtenir un coup valide.</exception>
         internal bool ObtenirCoup(int index) {
-            bool tirer = lectures[index].ReadLine() == true.ToString();
+            string rep = lectures[index].ReadLine();
+            if (rep == null)
+                throw new InvalidDataException();
+
+            bool tirer = rep == true.ToString();
 
             for (int i = 0; i < reseaux.Count; i++)
                 if (i != index)
@@ -172,6 +182,18 @@ namespace Blackjack {
             reseaux.RemoveAt(index);
             lectures.RemoveAt(index);
             ecritures.RemoveAt(index);
+        }
+
+        public void Dispose() {
+            foreach (NetworkStream reseau in reseaux)
+                reseau.Dispose();
+            foreach (StreamReader lecture in lectures)
+                lecture.Dispose();
+            foreach (StreamWriter ecriture in ecritures)
+                ecriture.Dispose();
+
+            if (tcpListener != null)
+                tcpListener.Stop();
         }
     }
 }

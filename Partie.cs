@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
 
 namespace Blackjack {
     /// <summary>Classe d'une partie de Blackjack.</summary>
     [Serializable]
-    public class Partie {
+    public class Partie : IDisposable {
         #region Données membres
 
         [NonSerialized] private readonly Salon salon;
@@ -24,8 +26,6 @@ namespace Blackjack {
 
         /// <summary>Constante utilisée pour représenter l'hôte.</summary>
         [NonSerialized] private const int HOTE = 0;
-        /// <summary>Constante utilisée pour représenter le nombre de paquets du sabot d'une partie.</summary>
-        [NonSerialized] private const int PAQUETS = 8;
 
         #endregion
 
@@ -38,15 +38,15 @@ namespace Blackjack {
         /// <param name="min">Mise minimale des joueurs.</param>
         /// <param name="virtuel">Définie si la partie sera jouée avec des joueurs virtuels ou distants.</param>
         /// <exception cref="ArgumentOutOfRangeException">Le nombre de joueur dans la partie doit être entre 1 et 4.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Le montant initial des joueurs doit être plus grand que 0.</exception>
         /// <exception cref="ArgumentOutOfRangeException">La mise minimale des joueurs doit être plus grande que 0.</exception>
+        /// <exception cref="ArgumentException">La mise minimale des joueurs doit être plus petite ou égale au montant initial de ceux-ci.</exception>
         public Partie(string nom, int nombre, double initial, double min, bool virtuel) {
             salon = new Salon(this);
+            NouveauSabot();
 
-            sabot = new Sabot(PAQUETS);
-            sabot.Melanger();
-
-            this.initial = initial;
-            this.min = min > 0 ? min : throw new ArgumentOutOfRangeException("min", "La mise minimale des joueurs doit être plus grande que 0.");
+            this.initial = initial > 0 ? initial : throw new ArgumentOutOfRangeException("initial", "Le montant initial des joueurs doit être plus grand que 0.");
+            this.min = min > 0 ? min <= initial ? min : throw new ArgumentException("min", "La mise minimale des joueurs doit être plus petite ou égale au montant initial de ceux-ci.") : throw new ArgumentOutOfRangeException("min", "La mise minimale des joueurs doit être plus grande que 0.");
             local = HOTE;
 
             Joueur hote = new Joueur(nom, initial);
@@ -59,7 +59,7 @@ namespace Blackjack {
 
             if (participants.Count < nombre) {
                 reseau = new Reseau();
-                new Thread(AttendreJoueur).Start();
+                new Thread(AttendreJoueur) { IsBackground = true }.Start();
             } else {
                 AjouterCroupier();
                 Jouer();
@@ -89,7 +89,7 @@ namespace Blackjack {
             reseau.EnvoyerJoueur(client);
 
             if (participants.Count < Nombre)
-                new Thread(AttendreJoueur).Start();
+                new Thread(AttendreJoueur) { IsBackground = true }.Start();
             else {
                 AjouterCroupier();
                 Jouer();
@@ -130,26 +130,7 @@ namespace Blackjack {
             if (participants[actif++] is Joueur joueur)
                 joueur.Miser(mise);
 
-            if (participants[actif] is Joueur suivant)
-                suivant.Actif = true;
-
-            if (EstActif && participants[actif] is Joueur miseur)
-                salon.AfficherMise(miseur.Montant < min ? miseur.Montant : min, miseur.Montant);
-            else if (participants[actif] is JoueurVirtuel)
-                Miser(min);
-            else if (participants[actif] is Croupier) {
-                DistribuerCartes();
-                participants[actif].Actif = true;
-
-                if (EstActif)
-                    if (!participants[actif].Blackjack)
-                        salon.DebloquerActions();
-                    else
-                        TourSuivant();
-                else
-                    new Thread(AttendreCoup).Start();
-            } else
-                new Thread(AttendreMise).Start();
+            MiseSuivante();
         }
 
         /// <summary>Effectue l'action de tirer une carte (HIT).</summary>
@@ -164,13 +145,13 @@ namespace Blackjack {
             }
 
             if (participants[actif].Total >= 21) // Si le joueur saute ou compte déjà 21
-                TourSuivant();
+                FinTour();
             else if (participants[actif] is JoueurVirtuel)
                 CoupJoueurVirtuel();
             else if (participants[actif] is Croupier)
                 CoupCroupier();
             else if (!EstActif)
-                new Thread(AttendreCoup).Start();
+                new Thread(AttendreCoup) { IsBackground = true }.Start();
         }
 
         /// <summary>Effectue l'action de rester (STAND).</summary>
@@ -179,7 +160,7 @@ namespace Blackjack {
                 reseau.EnvoyerCoup(false);
 
             participants[actif].Rester();
-            TourSuivant();
+            FinTour();
         }
 
         #endregion
@@ -197,7 +178,7 @@ namespace Blackjack {
             if (EstActif && participants[actif] is Joueur joueur)
                 salon.AfficherMise(joueur.Montant < min ? joueur.Montant : min, joueur.Montant);
             else
-                new Thread(AttendreMise).Start();
+                new Thread(AttendreMise) { IsBackground = true }.Start();
         }
 
         /// <summary>Distribue les cartes aux joueurs et au croupier.</summary>
@@ -219,29 +200,55 @@ namespace Blackjack {
             actif = HOTE;
         }
 
-        /// <summary>Passe au tour suivant.</summary>
-        private void TourSuivant() {
+        /// <summary>Passe à la ma mise suivante.</summary>
+        private void MiseSuivante() {
+            if (participants[actif] is Joueur suivant)
+                suivant.Actif = true;
+
+            if (EstActif && participants[actif] is Joueur miseur)
+                salon.AfficherMise(miseur.Montant < min ? miseur.Montant : min, miseur.Montant);
+            else if (participants[actif] is JoueurVirtuel)
+                Miser(min);
+            else if (participants[actif] is Croupier) {
+                DistribuerCartes();
+                participants[actif].Actif = true;
+
+                if (participants[actif].Blackjack)
+                    FinTour();
+                else if (EstActif)
+                    salon.DebloquerActions();
+                else
+                    new Thread(AttendreCoup) { IsBackground = true }.Start();
+            } else
+                new Thread(AttendreMise) { IsBackground = true }.Start();
+        }
+
+        /// <summary>Mets fin au tour actif.</summary>
+        private void FinTour() {
             if (EstActif)
                 salon.BloquerActions();
-
             participants[actif++].Actif = false;
 
+            TourSuivant();
+        }
+
+        /// <summary>Passe au tour suivant.</summary>
+        private void TourSuivant() {
             if (actif == participants.Count)
                 Fin();
             else {
                 participants[actif].Actif = true;
 
-                if (EstActif)
-                    if (!participants[actif].Blackjack)
-                        salon.DebloquerActions();
-                    else
-                        TourSuivant();
+                if (participants[actif].Blackjack)
+                    FinTour();
+                else if (EstActif)
+                    salon.DebloquerActions();
                 else if (participants[actif] is Croupier)
                     CoupCroupier();
                 else if (participants[actif] is JoueurVirtuel)
                     CoupJoueurVirtuel();
                 else
-                    new Thread(AttendreCoup).Start();
+                    new Thread(AttendreCoup) { IsBackground = true }.Start();
             }
         }
 
@@ -297,7 +304,7 @@ namespace Blackjack {
                     }
             }
 
-            MessageBox.Show(msg, "Résultat de la partie", MessageBoxButtons.OK, MessageBoxIcon.None);
+            MessageBox.Show(msg, "Résultat de la partie", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             List<Joueur> elimine = new List<Joueur>(); // Liste temporaire pour stocker les participants à éliminer
             foreach (Joueur joueur in participants.Where(participant => participant is Joueur joueur && joueur.Montant <= 0))
@@ -307,10 +314,7 @@ namespace Blackjack {
                 Eliminer(joueur);
 
             if (elimine.Contains(participants[local]))
-                if (salon.InvokeRequired)
-                    salon.Invoke(new MethodInvoker(delegate { salon.Close(); }));
-                else
-                    salon.Close();
+                salon.Fermer();
             else
                 Jouer();
         }
@@ -319,18 +323,23 @@ namespace Blackjack {
         /// <param name="joueur">Joueur à éliminé</param>
         private void Eliminer(Joueur joueur) {
             if (joueur == participants[local])
-                MessageBox.Show("Votre montant a atteint 0 $. Votre partie est terminée. Meilleure chance la prochaine fois!", "Partie terminée", MessageBoxButtons.OK, MessageBoxIcon.None);
+                MessageBox.Show("Votre montant a atteint 0 $. Votre partie est terminée. Meilleure chance la prochaine fois!", "Partie terminée", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else {
                 int index = participants.FindIndex((participant) => participant == joueur);
 
-                if (local > index)
-                    local--;
+                if (index == HOTE) {
+                    MessageBox.Show("Il n'y a plus d'hôte pour continuer la partie. Retour au menu principal.", "Partie terminée", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    salon.Fermer();
+                } else {
+                    if (local > index)
+                        local--;
 
-                if (EstHote && reseau != null)
-                    reseau.Retirer(index - 1);
+                    if (EstHote && reseau != null)
+                        reseau.Retirer(index - 1);
 
-                participants.Remove(joueur);
-                salon.RetirerJoueur(joueur);
+                    participants.Remove(joueur);
+                    salon.RetirerJoueur(joueur);
+                }
             }
         }
 
@@ -348,9 +357,10 @@ namespace Blackjack {
             salon.AjouterCroupier(croupier);
         }
 
+        /// <summary>Crée un nouveau sabot.</summary>
         private void NouveauSabot() {
             if (EstHote) {
-                sabot = new Sabot(PAQUETS);
+                sabot = new Sabot(8);
                 sabot.Melanger();
                 if (reseau != null)
                     reseau.EnvoyerSabot(sabot);
@@ -365,32 +375,69 @@ namespace Blackjack {
         /// <summary>Ajoute un joueur distant à la partie. Cet appel est bloquant.</summary>
         /// <remarks>Puisque cet appel est bloquant il est recommandé de le placer dans un fil.</remarks>
         private void AttendreJoueur() {
-            if (EstHote)
-                reseau.ObtenirConnexion(this);
+            try {
+                if (EstHote)
+                    reseau.ObtenirConnexion(this);
 
-            AjouterJoueur(EstHote ? reseau.ObtenirJoueur(participants.Count - 1) : reseau.ObtenirJoueur());
+                AjouterJoueur(EstHote ? reseau.ObtenirJoueur(participants.Count - 1) : reseau.ObtenirJoueur());
 
-            if (participants.Count < Nombre)
-                new Thread(AttendreJoueur).Start();
-            else {
-                AjouterCroupier();
-                Jouer();
+                if (participants.Count < Nombre)
+                    new Thread(AttendreJoueur) { IsBackground = true }.Start();
+                else {
+                    AjouterCroupier();
+                    Jouer();
+                }
+            } catch (SocketException) { // Exception levée lorsqu'aucune connexion est obtenue suite à la fermeture du formulaire par l'hôte
+            } catch (IOException ex) {
+                MessageBox.Show(ex.Message + " Retour au menu principal.", "Erreur de connexion", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                salon.Fermer();
             }
         }
 
         /// <summary>Reçoit la mise d'un joueur distant. Cet appel est bloquant.</summary>
         /// <remarks>Puisque cet appel est bloquant il est recommandé de le placer dans un fil.</remarks>
-        private void AttendreMise() => Miser(EstHote ? reseau.ObtenirMise(actif - 1) : reseau.ObtenirMise());
+        private void AttendreMise() {
+            try {
+                Miser(EstHote ? reseau.ObtenirMise(actif - 1) : reseau.ObtenirMise());
+            } catch (ArgumentNullException) {
+                MessageBox.Show("Le joueur actif a quitté la partie. Il sera éliminé.", "Erreur de connexion", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Eliminer(participants[actif] as Joueur);
+                MiseSuivante();
+            } catch (IOException ex) {
+                Eliminer(participants[actif] as Joueur);
+                if (actif != HOTE) {
+                    MessageBox.Show(ex.Message + " Le joueur actif sera éliminé.", "Erreur de connexion", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MiseSuivante();
+                }
+            }
+        }
 
         /// <summary>Reçoit le coup d'un joueur distant. Cet appel est bloquant.</summary>
         /// <remarks>Puisque cet appel est bloquant il est recommandé de le placer dans un fil.</remarks>
         private void AttendreCoup() {
-            if (EstHote ? reseau.ObtenirCoup(actif - 1) : reseau.ObtenirCoup())
-                Tirer();
-            else
-                Rester();
+            try {
+                if (EstHote ? reseau.ObtenirCoup(actif - 1) : reseau.ObtenirCoup())
+                    Tirer();
+                else
+                    Rester();
+            } catch (InvalidDataException) {
+                MessageBox.Show("Le joueur actif a quitté la partie. Il sera éliminé.", "Erreur de connexion", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Eliminer(participants[actif] as Joueur);
+                TourSuivant();
+            } catch (IOException ex) {
+                Eliminer(participants[actif] as Joueur);
+                if (actif != HOTE) {
+                    MessageBox.Show(ex.Message + " Le joueur actif sera éliminé.", "Erreur de connexion", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    TourSuivant();
+                }
+            }
         }
 
         #endregion
+
+        public void Dispose() {
+            if (reseau != null)
+                reseau.Dispose();
+        }
     }
 }
