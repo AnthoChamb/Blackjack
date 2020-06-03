@@ -46,17 +46,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlackJack.cs" />
     <Compile Include="Carte.cs" />
     <Compile Include="Atout.cs" />
     <Compile Include="JoueurVirtuel.cs" />
     <Compile Include="Reseau.cs" />
     <Compile Include="Croupier.cs" />
     <Compile Include="Participant.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="MenuPrincipal.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="MenuPrincipal.Designer.cs">
+      <DependentUpon>MenuPrincipal.cs</DependentUpon>
     </Compile>
     <Compile Include="Partie.cs" />
     <Compile Include="Joueur.cs" />
@@ -70,8 +71,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="MenuPrincipal.resx">
+      <DependentUpon>MenuPrincipal.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Salon.resx">
       <DependentUpon>Salon.cs</DependentUpon>
