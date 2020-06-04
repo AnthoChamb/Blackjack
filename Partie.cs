@@ -433,11 +433,12 @@ namespace Blackjack {
             }
         }
 
-        #endregion
+       
 
         public void Dispose() {
             if (reseau != null)
                 reseau.Dispose();
         }
+        #endregion
     }
 }
