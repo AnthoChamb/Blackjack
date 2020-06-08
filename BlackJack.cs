@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -12,14 +13,14 @@ namespace Blackjack {
     public class Blackjack {
         #region Données membres 
 
-        MenuPrincipal menuPrincipal;
+        private readonly MenuPrincipal menuPrincipal;
 
         #endregion
 
         #region Constructeurs
         /// <summary>Créer l'instance du menu principal.</summary>
         public Blackjack() {
-            this.menuPrincipal = new MenuPrincipal(this);
+            menuPrincipal = new MenuPrincipal(this);
         }
         #endregion
 
@@ -39,7 +40,7 @@ namespace Blackjack {
                 MenuPrincipal.HebergementInvalide();
 
             } catch (Exception ex) {
-                menuPrincipal.AfficherErreur(ex.Message);
+                MenuPrincipal.AfficherErreur(ex.Message);
 
             }
         }
@@ -56,7 +57,7 @@ namespace Blackjack {
                 MenuPrincipal.AdresseIPHoteIntrouvable();
 
             } catch (Exception ex) {
-                menuPrincipal.AfficherErreur(ex.Message);
+                MenuPrincipal.AfficherErreur(ex.Message);
 
             }
         }

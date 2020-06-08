@@ -31,7 +31,7 @@ namespace Blackjack {
             montant -= mise;
 
             control.Montant = montant;
-            control.Action = "Mise " + mise + " $";
+            control.Action = "Mise " + mise.ToString("C2");
         }
 
         /// <summary>Effectue l'action lors d'une victoire avec un Blackjack contre le croupier.</summary>

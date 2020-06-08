@@ -6,9 +6,7 @@ namespace Blackjack {
         /// <summary>Classe du contrôle utilisateur graphique d'une carte à jouer.</summary>
         public partial class ControlCarte : UserControl {
             /// <summary>Crée un contrôle utilisateur graphique d'une carte à joueur.</summary>
-            public ControlCarte() {
-                InitializeComponent();
-            }
+            public ControlCarte() => InitializeComponent();
 
             /// <summary>Crée un contrôle utilisateur graphique d'une carte à jouer avec les informations spécifiés.</summary>
             /// <param name="figure">Figure de la carte.</param>

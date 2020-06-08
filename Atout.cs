@@ -3,7 +3,7 @@ using System;
 using System.Drawing;
 
 namespace Blackjack {
-    /// <summary>Structure d'un atout de carte à jouer.</summary>
+    /// <summary>Classe d'un atout de carte à jouer.</summary>
     [Serializable]
     public class Atout {
         private readonly Color couleur;

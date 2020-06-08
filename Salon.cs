@@ -48,9 +48,15 @@ namespace Blackjack {
         /// <param name="joueur">Joueur à ajouter.</param>
         public void AjouterJoueur(Joueur joueur) {
             if (flowJoueurs.InvokeRequired)
-                flowJoueurs.Invoke(new MethodInvoker(delegate { flowJoueurs.Controls.Add(joueur.Control); }));
-            else
+                flowJoueurs.Invoke(new MethodInvoker(delegate { 
+                    flowJoueurs.Controls.Add(joueur.Control);
+                    AfficherAttente();
+                })
+            );
+            else {
                 flowJoueurs.Controls.Add(joueur.Control);
+                AfficherAttente();
+            }
         }
 
         /// <summary>Retire le joueur spécifié du salon de jeu.</summary>
@@ -98,12 +104,24 @@ namespace Blackjack {
                 pannelActions.Enabled = true;
         }
 
-        /// <summary>Ferme le salon de jeu.</summary>
+        /// <summary>Ferme le salon de jeu de jeu.</summary>
+        /// <remarks>Cette méthode ferme le formulaire de manière sécuritaire pour les opération inter-fils.
+        /// Il est donc préférable à Close() dans les contextes où plusieurs fils peuvent être utilisés.</remarks>
         public void Fermer() {
             if (InvokeRequired)
                 Invoke(new MethodInvoker(delegate { Close(); }));
             else
                 Close();
+        }
+
+        #endregion
+
+        #region Méthodes privées
+
+        /// <summary>Affiche le nombre de joueurs attendues pour le début de la partie.</summary>
+        private void AfficherAttente() {
+            labAttente.Text = "En attente de " + (partie.Nombre - partie.Compte) + " autre(s) joueur(s)...";
+            labAttente.Visible = partie.Compte < partie.Nombre;
         }
 
         #endregion

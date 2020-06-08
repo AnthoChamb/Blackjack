@@ -1,4 +1,6 @@
-﻿namespace Blackjack {
+﻿using System.Drawing;
+
+namespace Blackjack {
     partial class Salon {
         /// <summary>
         /// Variable nécessaire au concepteur.
@@ -10,14 +12,14 @@
         /// </summary>
         /// <param name="disposing">true si les ressources managées doivent être supprimées ; sinon, false.</param>
         protected override void Dispose(bool disposing) {
+            base.Dispose(disposing);
+
             if (disposing)
                 if (components != null)
                     components.Dispose();
 
             if (partie != null)
                 partie.Dispose();
-
-            base.Dispose(disposing);
         }
 
         #region Code généré par le Concepteur Windows Form
@@ -27,6 +29,7 @@
         /// le contenu de cette méthode avec l'éditeur de code.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Salon));
             this.flowJoueurs = new System.Windows.Forms.FlowLayoutPanel();
             this.pannelActions = new System.Windows.Forms.Panel();
             this.btnRester = new System.Windows.Forms.Button();
@@ -35,6 +38,7 @@
             this.btnMiser = new System.Windows.Forms.Button();
             this.pannelMise = new System.Windows.Forms.Panel();
             this.labMise = new System.Windows.Forms.Label();
+            this.labAttente = new System.Windows.Forms.Label();
             this.pannelActions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numMise)).BeginInit();
             this.pannelMise.SuspendLayout();
@@ -45,9 +49,9 @@
             this.flowJoueurs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowJoueurs.BackColor = System.Drawing.Color.Transparent;
-            this.flowJoueurs.Location = new System.Drawing.Point(12, 241);
+            this.flowJoueurs.Location = new System.Drawing.Point(12, 257);
             this.flowJoueurs.Name = "flowJoueurs";
-            this.flowJoueurs.Size = new System.Drawing.Size(1235, 156);
+            this.flowJoueurs.Size = new System.Drawing.Size(1640, 156);
             this.flowJoueurs.TabIndex = 0;
             // 
             // pannelActions
@@ -56,7 +60,7 @@
             this.pannelActions.Controls.Add(this.btnRester);
             this.pannelActions.Controls.Add(this.btnTirer);
             this.pannelActions.Enabled = false;
-            this.pannelActions.Location = new System.Drawing.Point(12, 403);
+            this.pannelActions.Location = new System.Drawing.Point(12, 419);
             this.pannelActions.Name = "pannelActions";
             this.pannelActions.Size = new System.Drawing.Size(170, 35);
             this.pannelActions.TabIndex = 2;
@@ -103,6 +107,8 @@
             // 
             // btnMiser
             // 
+            this.btnMiser.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMiser.Location = new System.Drawing.Point(16, 56);
             this.btnMiser.Name = "btnMiser";
             this.btnMiser.Size = new System.Drawing.Size(120, 23);
@@ -113,12 +119,13 @@
             // 
             // pannelMise
             // 
+            this.pannelMise.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.pannelMise.Controls.Add(this.labMise);
             this.pannelMise.Controls.Add(this.numMise);
             this.pannelMise.Controls.Add(this.btnMiser);
-            this.pannelMise.Location = new System.Drawing.Point(422, 121);
+            this.pannelMise.Location = new System.Drawing.Point(12, 164);
             this.pannelMise.Name = "pannelMise";
-            this.pannelMise.Size = new System.Drawing.Size(147, 100);
+            this.pannelMise.Size = new System.Drawing.Size(147, 87);
             this.pannelMise.TabIndex = 5;
             this.pannelMise.Visible = false;
             // 
@@ -132,15 +139,29 @@
             this.labMise.TabIndex = 5;
             this.labMise.Text = "Placer une mise";
             // 
+            // labAttente
+            // 
+            this.labAttente.AutoSize = true;
+            this.labAttente.ForeColor = System.Drawing.Color.White;
+            this.labAttente.Location = new System.Drawing.Point(12, 13);
+            this.labAttente.Name = "labAttente";
+            this.labAttente.Size = new System.Drawing.Size(95, 13);
+            this.labAttente.TabIndex = 6;
+            this.labAttente.Text = "Joueurs en attente";
+            this.labAttente.Visible = false;
+            // 
             // Salon
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DarkGreen;
-            this.ClientSize = new System.Drawing.Size(1264, 450);
+            this.ClientSize = new System.Drawing.Size(1669, 466);
+            this.Controls.Add(this.labAttente);
             this.Controls.Add(this.pannelMise);
             this.Controls.Add(this.pannelActions);
             this.Controls.Add(this.flowJoueurs);
+            this.Icon = new Icon("Icon.ico");
+            this.MinimumSize = new System.Drawing.Size(1685, 505);
             this.Name = "Salon";
             this.Text = "Salon de jeu";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Salon_FormClosed);
@@ -149,6 +170,7 @@
             this.pannelMise.ResumeLayout(false);
             this.pannelMise.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -161,6 +183,7 @@
         private System.Windows.Forms.Button btnMiser;
         private System.Windows.Forms.Panel pannelMise;
         private System.Windows.Forms.Label labMise;
+        private System.Windows.Forms.Label labAttente;
     }
 }
 

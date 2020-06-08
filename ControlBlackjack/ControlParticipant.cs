@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace Blackjack {
@@ -6,27 +7,23 @@ namespace Blackjack {
         /// <summary>Classe du contrôle utilisateur graphique d'un participant de Blackjack.</summary>
         public partial class ControlParticipant : UserControl {
             /// <summary>Crée un contrôle utilisateur graphique d'un participant de Blackjack.</summary>
-            public ControlParticipant() {
-                InitializeComponent();
-            }
+            public ControlParticipant() => InitializeComponent();
 
             /// <summary>Crée un contrôle utilisateur graphique d'un participant de Blackjack avec le nom spécifié.</summary>
             /// <param name="nom">Nom du participant.</param>
-            public ControlParticipant(string nom) : this() {
-                Nom = nom;
-            }
+            public ControlParticipant(string nom) : this() => Nom = nom;
 
             /// <summary>Obtient et définit le nom affiché par le contrôle utilisateur graphique.</summary>
             public string Nom { get => labNom.Text; set => labNom.Text = value; }
 
             /// <summary>Obtient et définit le montant affiché par le contrôle utilisateur graphique.</summary>
             public double Montant {
-                get => double.Parse(labMontant.Text.Split(' ')[0]);
+                get => double.Parse(labMontant.Text, NumberStyles.Currency);
                 set {
                     if (labMontant.InvokeRequired)
                         labMontant.Invoke(new MethodInvoker(delegate { labMontant.Text = value + " $"; }));
                     else
-                        labMontant.Text = value + " $";
+                        labMontant.Text = value.ToString("C2");
                 }
             }
 
@@ -41,6 +38,7 @@ namespace Blackjack {
                 }
             }
 
+            /// <summary>Obtient et définit le total affiché par le contrôle utilisateur graphique.</summary>
             public int Total {
                 get => int.Parse(labTotal.Text);
                 set {

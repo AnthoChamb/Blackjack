@@ -23,6 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MenuPrincipal));
             this.btnCreer = new System.Windows.Forms.Button();
             this.btnRejoindre = new System.Windows.Forms.Button();
             this.grpHote = new System.Windows.Forms.GroupBox();
@@ -38,10 +39,10 @@
             this.numNbJoueur = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.grpClient = new System.Windows.Forms.GroupBox();
+            this.txbAddresseIP = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.txbNomClient = new System.Windows.Forms.TextBox();
-            this.txbAddresseIP = new System.Windows.Forms.TextBox();
             this.grpHote.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numMise)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numMontant)).BeginInit();
@@ -223,6 +224,13 @@
             this.grpClient.TabStop = false;
             this.grpClient.Text = "Rejoindre une partie existante";
             // 
+            // txbAddresseIP
+            // 
+            this.txbAddresseIP.Location = new System.Drawing.Point(318, 56);
+            this.txbAddresseIP.Name = "txbAddresseIP";
+            this.txbAddresseIP.Size = new System.Drawing.Size(100, 20);
+            this.txbAddresseIP.TabIndex = 14;
+            // 
             // label8
             // 
             this.label8.AutoSize = true;
@@ -248,13 +256,6 @@
             this.txbNomClient.Size = new System.Drawing.Size(100, 20);
             this.txbNomClient.TabIndex = 2;
             // 
-            // txbAddresseIP
-            // 
-            this.txbAddresseIP.Location = new System.Drawing.Point(318, 56);
-            this.txbAddresseIP.Name = "txbAddresseIP";
-            this.txbAddresseIP.Size = new System.Drawing.Size(100, 20);
-            this.txbAddresseIP.TabIndex = 14;
-            // 
             // MenuPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -263,6 +264,9 @@
             this.Controls.Add(this.grpClient);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.grpHote);
+            this.Icon = new System.Drawing.Icon("Icon.ico");
+            this.MaximumSize = new System.Drawing.Size(816, 489);
+            this.MinimumSize = new System.Drawing.Size(816, 489);
             this.Name = "MenuPrincipal";
             this.Text = "Form1";
             this.grpHote.ResumeLayout(false);

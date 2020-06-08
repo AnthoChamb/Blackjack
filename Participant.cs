@@ -61,7 +61,7 @@ namespace Blackjack {
             get => control.Actif;
             set {
                 control.Actif = value;
-                if (value)
+                if (value && !Blackjack)
                     control.Action = "Doit agir ...";
             }
         }

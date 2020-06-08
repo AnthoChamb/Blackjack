@@ -64,7 +64,7 @@ namespace Blackjack {
             MessageBoxIcon.Error);
 
         /// <summary>Affiche à l'utlisateur un message d'erreur indiqué en paramètre.</summary>
-        public void AfficherErreur(string err) => MessageBox.Show(err, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        public static void AfficherErreur(string err) => MessageBox.Show(err, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
         #endregion
 
@@ -77,10 +77,10 @@ namespace Blackjack {
         public string EntreeNomClient { get => txbNomClient.Text; }
 
         /// <summary>Retourne la valeur du numérique haut bas associé à la valeur de la mise minimale.</summary>
-        public double EntreeMin { get => (Double)numMise.Value; }
+        public double EntreeMin { get => (double)numMise.Value; }
 
         /// <summary>Retourne la valeur du numérique haut bas associé à la valeur du montant de départ par joueur.</summary>
-        public double EntreeInitial { get => (Double)numMontant.Value; }
+        public double EntreeInitial { get => (double)numMontant.Value; }
 
         /// <summary>Retourne la valeur de la boîte associée à l'adresse IP de l'hôte à rejoindre.</summary>
         public IPAddress EntreeIPAdresse { get => IPAddress.Parse(txbAddresseIP.Text); }
